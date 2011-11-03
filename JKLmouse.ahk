@@ -47,11 +47,12 @@ Hotkey, CapsLock & I, MouseUp
 Hotkey, CapsLock & J, MouseLeft
 Hotkey, CapsLock & K, MouseDown
 Hotkey, CapsLock & L, MouseRight
-Hotkey, CapsLock & M, MouseDownLeft
-Hotkey, CapsLock & O, MouseUpRight
-Hotkey, CapsLock & U, MouseUpLeft
+Hotkey, CapsLock & M, MouseLeftDown
+Hotkey, CapsLock & O, MouseRightUp
+Hotkey, CapsLock & U, MouseLeftUp
 Hotkey, CapsLock & `, , MouseDown
-Hotkey, CapsLock & `. , MouseDownRight
+Hotkey, CapsLock & `. , MouseRightDown
+
 Hotkey, CapsLock & Up, MouseUp
 Hotkey, CapsLock & Down, MouseDown
 Hotkey, CapsLock & Left, MouseLeft
@@ -59,16 +60,35 @@ Hotkey, CapsLock & Right, MouseRight
 
 return
 
-;Mouse movement support
+Move( x, y ) {
+	MouseMove, x, y, 0, R
+}
 
 MouseUp:
+	Move( 0, -1 )
+	return
 MouseDown:
+	Move( 0, 1 )
+	return
 MouseLeft:
+	Move( -1, 0 )
+	return
 MouseRight:
-MouseUpLeft:
-MouseUpRight:
-MouseDownLeft:
-MouseDownRight:
+	Move( 1, 0 )
+	return
+MouseLeftUp:
+	Move( -1, -1 )
+	return
+MouseRightUp:
+	Move( 1, -1 )
+	return
+MouseLeftDown:
+	Move( -1, 1 )
+	return
+MouseRightDown:
+	Move( 1, 1 )
+	return
+
 If Action <> 0
 {
 	IfNotInString, A_ThisLabel, %Action%
@@ -120,7 +140,7 @@ else if Action = MouseRight
 {
 	MouseMove, %MouseCurrentSpeedToDirection%, %MouseCurrentSpeedToSide%, 0, R
 }
-else if Action = MouseUpLeft
+else if Action = MouseLeftUp
 {
 	Temp = %MouseCurrentSpeedToDirection%
 	Temp -= %MouseCurrentSpeedToSide%
@@ -130,7 +150,7 @@ else if Action = MouseUpLeft
 	Temp2 *= -1
 	MouseMove, %Temp%, %Temp2%, 0, R
 }
-else if Action = MouseUpRight
+else if Action = MouseRightUp
 {
 	Temp = %MouseCurrentSpeedToDirection%
 	Temp += %MouseCurrentSpeedToSide%
@@ -139,7 +159,7 @@ else if Action = MouseUpRight
 	Temp2 *= -1
 	MouseMove, %Temp%, %Temp2%, 0, R
 }
-else if Action = MouseDownLeft
+else if Action = MouseLeftDown
 {
 	Temp = %MouseCurrentSpeedToDirection%
 	Temp += %MouseCurrentSpeedToSide%
@@ -148,7 +168,7 @@ else if Action = MouseDownLeft
 	Temp2 -= %MouseCurrentSpeedToSide%
 	MouseMove, %Temp%, %Temp2%, 0, R
 }
-else if Action = MouseDownRight
+else if Action = MouseRightDown
 {
 	Temp = %MouseCurrentSpeedToDirection%
 	Temp -= %MouseCurrentSpeedToSide%
