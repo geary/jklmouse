@@ -43,20 +43,45 @@ MouseWheelCurrentSpeed = %MouseSpeed%
 SetKeyDelay, -1
 SetMouseDelay, -1
 
+; Left hand
+Hotkey, CapsLock & W, MouseLeftUp
+Hotkey, CapsLock & E, MouseUp
+Hotkey, CapsLock & R, MouseRightUp
+Hotkey, CapsLock & S, MouseLeft
+Hotkey, CapsLock & D, MouseDown
+Hotkey, CapsLock & F, MouseRight
+Hotkey, CapsLock & X, MouseLeftDown
+Hotkey, CapsLock & C, MouseDown
+Hotkey, CapsLock & V, MouseRightDown
+
+; Right hand
+Hotkey, CapsLock & U, MouseLeftUp
 Hotkey, CapsLock & I, MouseUp
+Hotkey, CapsLock & O, MouseRightUp
 Hotkey, CapsLock & J, MouseLeft
 Hotkey, CapsLock & K, MouseDown
 Hotkey, CapsLock & L, MouseRight
 Hotkey, CapsLock & M, MouseLeftDown
-Hotkey, CapsLock & O, MouseRightUp
-Hotkey, CapsLock & U, MouseLeftUp
 Hotkey, CapsLock & `, , MouseDown
 Hotkey, CapsLock & `. , MouseRightDown
 
+; Numeric
+Hotkey, CapsLock & 7, MouseLeftUp
+Hotkey, CapsLock & 8, MouseUp
+Hotkey, CapsLock & 9, MouseRightUp
+Hotkey, CapsLock & 4, MouseLeft
+Hotkey, CapsLock & 5, MouseDown
+Hotkey, CapsLock & 6, MouseRight
+Hotkey, CapsLock & 1, MouseLeftDown
+Hotkey, CapsLock & 2, MouseDown
+Hotkey, CapsLock & 3, MouseRightDown
+
+; Arrows
 Hotkey, CapsLock & Up, MouseUp
 Hotkey, CapsLock & Down, MouseDown
 Hotkey, CapsLock & Left, MouseLeft
 Hotkey, CapsLock & Right, MouseRight
+
 
 return
 
