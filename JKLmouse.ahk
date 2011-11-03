@@ -1,24 +1,9 @@
-; Using Keyboard Numpad as a Mouse -- by deguix
-; http://www.autohotkey.com
-
-;START OF CONFIG SECTION
+; JKLmouse for AutoHotkey by Michael Geary
+; http://jklmouse.com/ - documentation
+; http://unlicense.org/ - public domain statement
+; Version 0.1: 11/3/2011
 
 #SingleInstance force
-#MaxHotkeysPerInterval 500
-
-; Using the keyboard hook to implement the Numpad hotkeys prevents
-; them from interfering with the generation of ANSI characters such
-; as à.  This is because AutoHotkey generates such characters
-; by holding down ALT and sending a series of Numpad keystrokes.
-; Hook hotkeys are smart enough to ignore such keystrokes.
-#UseHook
-
-;END OF CONFIG SECTION
-
-;This is needed or key presses would faulty send their natural
-;actions. Like NumPadDiv would send sometimes "/" to the
-;screen.       
-#InstallKeybdHook
 
 repeat = 0
 
@@ -27,7 +12,7 @@ SetMouseDelay, -1
 
 SetHotkeys( modifier ) {
 	
-	; TODO: refactor
+	; TODO: refactor keydown and keyup
 	
 	; KEY DOWN
 	
