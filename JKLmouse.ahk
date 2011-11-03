@@ -12,9 +12,8 @@ repeat = 0
 
 SetKey( mod, key, action ) {
 	keydown = %mod% & %key%
-	keyup = %keydown% UP
 	Hotkey %keydown%, %action%
-	Hotkey %keyup%, StopAcceleration
+	Hotkey %keydown% UP, StopAcceleration
 }
 
 SetKeys( mod ) {
