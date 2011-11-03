@@ -13,17 +13,6 @@
 ; Hook hotkeys are smart enough to ignore such keystrokes.
 #UseHook
 
-MouseSpeed = 1
-MouseAccelerationSpeed = 1
-MouseMaxSpeed = 5
-
-;Mouse wheel speed is also set on Control Panel. As that
-;will affect the normal mouse behavior, the real speed of
-;these three below are times the normal mouse wheel speed.
-MouseWheelSpeed = 1
-MouseWheelAccelerationSpeed = 1
-MouseWheelMaxSpeed = 5
-
 ;END OF CONFIG SECTION
 
 ;This is needed or key presses would faulty send their natural
@@ -33,19 +22,15 @@ MouseWheelMaxSpeed = 5
 
 repeat = 0
 
-Temp = 0
-Temp2 = 0
-
-MouseCurrentAccelerationSpeed = 0
-MouseCurrentSpeed = %MouseSpeed%
-
-MouseWheelCurrentAccelerationSpeed = 0
-MouseWheelCurrentSpeed = %MouseSpeed%
-
 SetKeyDelay, -1
 SetMouseDelay, -1
 
 SetHotkeys( modifier ) {
+	
+	; TODO: refactor
+	
+	; KEY DOWN
+	
 	; Left hand
 	Hotkey, %modifier% & W, MouseLeftUp
 	Hotkey, %modifier% & E, MouseUp
@@ -84,6 +69,47 @@ SetHotkeys( modifier ) {
 	Hotkey, %modifier% & Down, MouseDown
 	Hotkey, %modifier% & Left, MouseLeft
 	Hotkey, %modifier% & Right, MouseRight
+	
+	; KEY UP
+	
+	; Left hand
+	Hotkey, %modifier% & W UP, StopAcceleration
+	Hotkey, %modifier% & E UP, StopAcceleration
+	Hotkey, %modifier% & R UP, StopAcceleration
+	Hotkey, %modifier% & S UP, StopAcceleration
+	Hotkey, %modifier% & D UP, StopAcceleration
+	Hotkey, %modifier% & F UP, StopAcceleration
+	Hotkey, %modifier% & X UP, StopAcceleration
+	Hotkey, %modifier% & C UP, StopAcceleration
+	Hotkey, %modifier% & V UP, StopAcceleration
+	
+	; Right hand
+	Hotkey, %modifier% & U UP, StopAcceleration
+	Hotkey, %modifier% & I UP, StopAcceleration
+	Hotkey, %modifier% & O UP, StopAcceleration
+	Hotkey, %modifier% & J UP, StopAcceleration
+	Hotkey, %modifier% & K UP, StopAcceleration
+	Hotkey, %modifier% & L UP, StopAcceleration
+	Hotkey, %modifier% & M UP, StopAcceleration
+	Hotkey, %modifier% & `,  UP, StopAcceleration
+	Hotkey, %modifier% & `.  UP, StopAcceleration
+	
+	; Numeric
+	Hotkey, %modifier% & 7 UP, StopAcceleration
+	Hotkey, %modifier% & 8 UP, StopAcceleration
+	Hotkey, %modifier% & 9 UP, StopAcceleration
+	Hotkey, %modifier% & 4 UP, StopAcceleration
+	Hotkey, %modifier% & 5 UP, StopAcceleration
+	Hotkey, %modifier% & 6 UP, StopAcceleration
+	Hotkey, %modifier% & 1 UP, StopAcceleration
+	Hotkey, %modifier% & 2 UP, StopAcceleration
+	Hotkey, %modifier% & 3 UP, StopAcceleration
+	
+	; Arrows
+	Hotkey, %modifier% & Up UP, StopAcceleration
+	Hotkey, %modifier% & Down UP, StopAcceleration
+	Hotkey, %modifier% & Left UP, StopAcceleration
+	Hotkey, %modifier% & Right UP, StopAcceleration
 }
 
 SetHotkeys( "CapsLock" )
@@ -129,106 +155,6 @@ MouseRightDown:
 	Move( 1, 1 )
 	return
 
-If Action <> 0
-{
-	IfNotInString, A_ThisLabel, %Action%
-	{
-		MouseCurrentAccelerationSpeed = 0
-		MouseCurrentSpeed = %MouseSpeed%
-	}
-}
-StringReplace, Action, A_ThisLabel, *
-
-ButtonAccelerationStart:
-If MouseAccelerationSpeed >= 1
-{
-	If MouseMaxSpeed > %MouseCurrentSpeed%
-	{
-		Temp = 0.001
-		Temp *= %MouseAccelerationSpeed%
-		MouseCurrentAccelerationSpeed += %Temp%
-		MouseCurrentSpeed += %MouseCurrentAccelerationSpeed%
-	}
-}
-
-MouseCurrentSpeedToDirection = 1
-
-MouseCurrentSpeedToSide = 0
-
-MouseCurrentSpeedToDirection *= %MouseCurrentSpeed%
-MouseCurrentSpeedToSide *= %MouseCurrentSpeed%
-
-Temp = 0
-
-If Action = MouseUp
-{
-	MouseCurrentSpeedToDirection *= -1
-	MouseMove, %MouseCurrentSpeedToSide%, %MouseCurrentSpeedToDirection%, 0, R
-}
-else if Action = MouseDown
-{
-	MouseCurrentSpeedToSide *= -1
-	MouseMove, %MouseCurrentSpeedToSide%, %MouseCurrentSpeedToDirection%, 0, R
-}
-else if Action = MouseLeft
-{
-	MouseCurrentSpeedToSide *= -1
-	MouseCurrentSpeedToDirection *= -1
-
-	MouseMove, %MouseCurrentSpeedToDirection%, %MouseCurrentSpeedToSide%, 0, R
-}
-else if Action = MouseRight
-{
-	MouseMove, %MouseCurrentSpeedToDirection%, %MouseCurrentSpeedToSide%, 0, R
-}
-else if Action = MouseLeftUp
-{
-	Temp = %MouseCurrentSpeedToDirection%
-	Temp -= %MouseCurrentSpeedToSide%
-	Temp *= -1
-	Temp2 = %MouseCurrentSpeedToDirection%
-	Temp2 += %MouseCurrentSpeedToSide%
-	Temp2 *= -1
-	MouseMove, %Temp%, %Temp2%, 0, R
-}
-else if Action = MouseRightUp
-{
-	Temp = %MouseCurrentSpeedToDirection%
-	Temp += %MouseCurrentSpeedToSide%
-	Temp2 = %MouseCurrentSpeedToDirection%
-	Temp2 -= %MouseCurrentSpeedToSide%
-	Temp2 *= -1
-	MouseMove, %Temp%, %Temp2%, 0, R
-}
-else if Action = MouseLeftDown
-{
-	Temp = %MouseCurrentSpeedToDirection%
-	Temp += %MouseCurrentSpeedToSide%
-	Temp *= -1
-	Temp2 = %MouseCurrentSpeedToDirection%
-	Temp2 -= %MouseCurrentSpeedToSide%
-	MouseMove, %Temp%, %Temp2%, 0, R
-}
-else if Action = MouseRightDown
-{
-	Temp = %MouseCurrentSpeedToDirection%
-	Temp -= %MouseCurrentSpeedToSide%
-	Temp2 *= -1
-	Temp2 = %MouseCurrentSpeedToDirection%
-	Temp2 += %MouseCurrentSpeedToSide%
-	MouseMove, %Temp%, %Temp2%, 0, R
-}
-
-SetTimer, ButtonAccelerationEnd, 10
-return
-
-ButtonAccelerationEnd:
-GetKeyState, kstate, %Action%, P
-if kstate = D
-	Goto ButtonAccelerationStart
-
-SetTimer, ButtonAccelerationEnd, off
-MouseCurrentAccelerationSpeed = 0
-MouseCurrentSpeed = %MouseSpeed%
-Action = 0
-return
+StopAcceleration:
+	repeat = 0
+	return
