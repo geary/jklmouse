@@ -31,6 +31,8 @@ MouseWheelMaxSpeed = 5
 ;screen.       
 #InstallKeybdHook
 
+repeat = 0
+
 Temp = 0
 Temp2 = 0
 
@@ -94,6 +96,11 @@ SetHotkeys( "~XButton2" )
 return
 
 Move( x, y ) {
+	global repeat
+	++repeat
+	factor := Floor( ( repeat + 1 ) / 2 )
+	x := x * factor
+	y := y * factor
 	MouseMove, x, y, 0, R
 }
 
@@ -166,7 +173,8 @@ else if Action = MouseDown
 else if Action = MouseLeft
 {
 	MouseCurrentSpeedToSide *= -1
-	MouseCurrentSpeedToDirection *= -1
+	MouseCurrentSpeedToDirection *= -1
+
 	MouseMove, %MouseCurrentSpeedToDirection%, %MouseCurrentSpeedToSide%, 0, R
 }
 else if Action = MouseRight
