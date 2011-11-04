@@ -5,16 +5,18 @@
 
 #SingleInstance force
 
-SetKeyDelay, -1
 SetMouseDelay, -1
 
 repeat = 0
 
-SetKey( mod, key, action ) {
-	keydown = %mod% & %key%
-	Hotkey %keydown%, %action%
-	Hotkey %keydown% UP, StopAcceleration
-}
+SetKeys( "CapsLock" )
+SetKeys( "~LButton" )
+SetKeys( "~RButton" )
+SetKeys( "~MButton" )
+SetKeys( "~XButton1" )
+SetKeys( "~XButton2" )
+
+return
 
 SetKeys( mod ) {
 	
@@ -56,17 +58,13 @@ SetKeys( mod ) {
 	SetKey( mod, "Down", "MouseDown" )
 	SetKey( mod, "Left", "MouseLeft" )
 	SetKey( mod, "Right", "MouseRight" )
-	
 }
 
-SetKeys( "CapsLock" )
-SetKeys( "~LButton" )
-SetKeys( "~RButton" )
-SetKeys( "~MButton" )
-SetKeys( "~XButton1" )
-SetKeys( "~XButton2" )
-
-return
+SetKey( mod, key, action ) {
+	keydown = %mod% & %key%
+	Hotkey %keydown%, %action%
+	Hotkey %keydown% UP, StopAcceleration
+}
 
 Move( x, y ) {
 	global repeat
