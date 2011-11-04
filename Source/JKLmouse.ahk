@@ -10,7 +10,7 @@ Menu, TRAY, Tip, JKLmouse
 
 SetMouseDelay, -1
 
-repeat = 0
+repeat := 0
 
 SetKeys( "CapsLock" )
 SetKeys( "~LButton" )
