@@ -5,6 +5,9 @@
 
 #SingleInstance force
 
+Menu, TRAY, Icon, JKLmouse.ico
+Menu, TRAY, Tip, JKLmouse
+
 SetMouseDelay, -1
 
 repeat = 0
