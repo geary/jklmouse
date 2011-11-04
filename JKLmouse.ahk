@@ -37,8 +37,8 @@ SetKeys( mod ) {
 	SetKey( mod, "K", "MouseDown" )
 	SetKey( mod, "L", "MouseRight" )
 	SetKey( mod, "M", "MouseLeftDown" )
-;	SetKey( mod", "`, "," MoveDown )
-;	SetKey( mod", "`. "," MoveRightDown )
+	SetKey( mod, "`,","MouseDown" )
+	SetKey( mod, "`.","MouseRightDown" )
 	
 	; Numeric
 	SetKey( mod, "7", "MouseLeftUp" )
