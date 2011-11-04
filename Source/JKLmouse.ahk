@@ -5,8 +5,13 @@
 
 #SingleInstance force
 
-Menu, TRAY, Icon, JKLmouse.ico
-Menu, TRAY, Tip, JKLmouse
+iconPath := RegExReplace( A_ScriptFullPath, "i).ahk$", ".ico" )
+Menu, Tray, Icon, %iconPath%
+Menu, Tray, Tip, JKLmouse
+Menu, Tray, Add
+Menu, Tray, Add, About JKLmouse, MenuAbout
+
+TrayTip JKLmouse, The Automatic Keyboard Mouse
 
 SetMouseDelay, -1
 
@@ -105,4 +110,8 @@ MouseRightDown:
 
 StopAcceleration:
 	repeat = 0
+	return
+
+MenuAbout:
+	Run, http://www.jklmouse.com/
 	return
