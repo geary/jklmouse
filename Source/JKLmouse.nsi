@@ -155,12 +155,10 @@ FunctionEnd
 Section Uninstall
   Delete "$INSTDIR\${PRODUCT_NAME}.url"
   Delete "$INSTDIR\uninst.exe"
-  ;Delete "$INSTDIR\Readme.html"
-  ;Delete "$INSTDIR\JKLmousD.dll"
   Delete "$INSTDIR\JKLmouse32.exe"
 
-  Delete "$SMPROGRAMS\JKLmouse\Uninstall.lnk"
-  Delete "$SMPROGRAMS\JKLmouse\Website.lnk"
+  Delete "$SMPROGRAMS\JKLmouse\Uninstall JKLmouse.lnk"
+  Delete "$SMPROGRAMS\JKLmouse\JKLmouse Website.lnk"
   Delete "$SMSTARTUP\JKLmouse.lnk"
 
   RMDir "$SMSTARTUP"
