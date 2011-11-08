@@ -41,7 +41,7 @@ Click Next to continue."
   
 ;  !define MUI_INSTFILESPAGE_BUTTON "Finish"
 
-;  !define MUI_FINISHPAGE_NOAUTOCLOSE
+  !define MUI_FINISHPAGE_NOAUTOCLOSE
 FunctionEnd
 
 Function MyFinish
@@ -92,7 +92,6 @@ FunctionEnd
 BrandingText "JKLmouse Setup "
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 OutFile "..\Build\JKLmouse-Setup.exe"
-InstallDir "$PROGRAMFILES\JKLmouse"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
 ShowUnInstDetails show
@@ -110,8 +109,12 @@ Section "MainSection" SEC01
   ${If} ${RunningX64}
     ${DisableX64FSRedirection}
     SetRegView 64
+    StrCpy $INSTDIR "$PROGRAMFILES64\JKLmouse"
+    SetOutPath $INSTDIR
     File /oname=JKLmouse.exe "..\Build\JKLmouse64.exe"
   ${Else}
+    StrCpy $INSTDIR "$PROGRAMFILES\JKLmouse"
+    SetOutPath $INSTDIR
     File /oname=JKLmouse.exe "..\Build\JKLmouse32.exe"
   ${EndIf}
   SetShellVarContext all
@@ -132,10 +135,6 @@ Section "MainSection" SEC01
 SectionEnd
 
 Section -AdditionalIcons
-  ${If} ${RunningX64}
-    ${DisableX64FSRedirection}
-    SetRegView 64
-  ${EndIf}
   WriteIniStr "$INSTDIR\${PRODUCT_NAME}.url" "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
   CreateDirectory "$SMPROGRAMS\JKLmouse"
   CreateShortCut "$SMPROGRAMS\JKLmouse\JKLmouse Website.lnk" "$INSTDIR\${PRODUCT_NAME}.url"
@@ -143,10 +142,6 @@ Section -AdditionalIcons
 SectionEnd
 
 Section -Post
-  ${If} ${RunningX64}
-    ${DisableX64FSRedirection}
-    SetRegView 64
-  ${EndIf}
   WriteUninstaller "$INSTDIR\uninst.exe"
   WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\JKLmouse.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
