@@ -110,11 +110,16 @@ Section "MainSection" SEC01
     ${DisableX64FSRedirection}
     SetRegView 64
     StrCpy $INSTDIR "$PROGRAMFILES64\JKLmouse"
-    SetOutPath $INSTDIR
-    File /oname=JKLmouse.exe "..\Build\JKLmouse64.exe"
   ${Else}
     StrCpy $INSTDIR "$PROGRAMFILES\JKLmouse"
-    SetOutPath $INSTDIR
+  ${EndIf}
+  SetOutPath $INSTDIR
+  ; Close running instance
+  FindWindow $0 "AutoHotKey" "$INSTDIR\JKLmouse.exe"
+  SendMessage $0 16 0 0
+  ${If} ${RunningX64}
+    File /oname=JKLmouse.exe "..\Build\JKLmouse64.exe"
+  ${Else}
     File /oname=JKLmouse.exe "..\Build\JKLmouse32.exe"
   ${EndIf}
   SetShellVarContext all
@@ -164,6 +169,9 @@ Function un.onInit
 FunctionEnd
 
 Section Uninstall
+  ; Close running instance
+  FindWindow $0 "AutoHotKey" "$INSTDIR\JKLmouse.exe"
+  SendMessage $0 16 0 0
   ${If} ${RunningX64}
     ${DisableX64FSRedirection}
     SetRegView 64
