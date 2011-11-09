@@ -1,0 +1,3 @@
+syntax: glob
+Build/*.exe
+Source/*.ahk.bak
