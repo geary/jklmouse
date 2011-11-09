@@ -43,7 +43,7 @@ Click Next to continue."
   
 ;  !define MUI_INSTFILESPAGE_BUTTON "Finish"
 
-  !define MUI_FINISHPAGE_NOAUTOCLOSE
+;  !define MUI_FINISHPAGE_NOAUTOCLOSE
 FunctionEnd
 
 Function MyFinish
