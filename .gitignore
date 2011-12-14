@@ -1,4 +1,3 @@
-syntax: glob
-.gitignore
+.hgignore
 AutoHotkey/Build/*.exe
 AutoHotkey/Source/*.ahk.bak
