@@ -25,13 +25,12 @@ Function MyInit
 
 ;  !define MUI_WELCOMEPAGE_TITLE "Welcome to JKLmouse!"
   !define MUI_WELCOMEPAGE_TEXT "\
-Thanks for using JKLmouse, the automatic keyboard mouse for notebook and laptop computers.\n\n\
-JKLmouse doesn't use special modes like other 'mouse key' programs. \
-JKLmouse springs into action every time you press the mouse button, turning all of these keys into mouse keys while the button is down:\n\n\
+JKLmouse - the automatic keyboard mouse for pixel perfect pointing\n\n\
+JKLmouse springs into action when you press any mouse (TrackPoint or touchpad) button, \
+turning all of these keys into mouse keys while the button is down:\n\n\
 The arrow keys\n\
 The number keys (if you have a numeric keypad)\n\
 The home row keys for left and right hand: SDF and JKL, and the keys above and below them.\n\n\
-There are no special modes to toggle on and off. JKLmouse gives you mouse keys when you need them.\n\n\
 Click Next to continue."
 
   !define MUI_WELCOMEPAGE_BUTTON "Install"
