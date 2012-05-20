@@ -3,17 +3,41 @@
 ; http://unlicense.org/ - public domain statement
 ; Version 0.1: 11/3/2011
 
+#AllowSameLineComments
 #SingleInstance force
 
 ; Use either the embedded icon in a compiled .exe,
 ; or a separate .ico file when running the .ahk script.
 iconPath := RegExReplace( A_ScriptFullPath, "i).ahk$", ".ico" )
 
+keyMap := ""
+
+keyMaps :=
+(join
+{
+	Arrows: "Up~Up Down~Down Left~Left Right~Right",
+	NumPad: "7~UpLeft 8~Up 9~UpRight 4~Left 5~Down 6~Right 1~DownLeft 2~Down 3~DownRight",
+	IJKL: "U~UpLeft I~Up O~UpRight J~Left K~Down L~Right M~DownLeft ,~Down .~DownRight",
+	HJKL: "H~Left J~Down K~Up L~Right",
+	ESDF: "W~UpLeft E~Up R~UpRight S~Left D~Down F~Right X~DownLeft C~Down V~DownRight",
+	WASD: "Q~UpLeft W~Up E~UpRight A~Left S~Down D~Right Z~DownLeft X~Down C~DownRight"
+}
+)
+
 ; Set up the tray icon and menu
 Menu, Tray, Icon, %iconPath%
 Menu, Tray, Tip, JKLmouse
 Menu, Tray, Add
+Menu, Tray, Add, Left Hand: ESDF, MenuESDF
+Menu, Tray, Add, Left Hand: WASD, MenuWASD
+Menu, Tray, Add
+Menu, Tray, Add, Right Hand: IJKL, MenuIJKL
+Menu, Tray, Add, Right Hand: HJKL, MenuHJKL
+Menu, Tray, Add
 Menu, Tray, Add, About JKLmouse, MenuAbout
+
+Menu, Tray, Check, Left Hand: ESDF
+Menu, Tray, Check, Right Hand: IJKL
 
 ; Display tray balloon
 ; TODO: more useful content?
@@ -27,66 +51,55 @@ SetMouseDelay, -1
 ; Hotkey repeat count for acceleration
 repeat := 0
 
-; Each of these modifier keys enables the same set of JKLmouse hotkeys
-SetKeys( "CapsLock" )
-SetKeys( "~LButton" )
-SetKeys( "~RButton" )
-SetKeys( "~MButton" )
-SetKeys( "~XButton1" )
-SetKeys( "~XButton2" )
+SetKeyMap( "Arrows", "NumPad", "IJKL", "ESDF" )
+;SetKeyMap( "Arrows", "NumPad", "HJKL", "WASD" )
+
+;MsgBox % keyMap
+
+SetAllKeys( true )
 
 return
 
-; Set up all the hotkeys for a specific modifier key
-SetKeys( mod ) {
-	
-	; Left hand
-	SetKey( mod, "W", "MouseLeftUp" )
-	SetKey( mod, "E", "MouseUp" )
-	SetKey( mod, "R", "MouseRightUp" )
-	SetKey( mod, "S", "MouseLeft" )
-	SetKey( mod, "D", "MouseDown" )
-	SetKey( mod, "F", "MouseRight" )
-	SetKey( mod, "X", "MouseLeftDown" )
-	SetKey( mod, "C", "MouseDown" )
-	SetKey( mod, "V", "MouseRightDown" )
-	
-	; Right hand
-	SetKey( mod, "U", "MouseLeftUp" )
-	SetKey( mod, "I", "MouseUp" )
-	SetKey( mod, "O", "MouseRightUp" )
-	SetKey( mod, "J", "MouseLeft" )
-	SetKey( mod, "K", "MouseDown" )
-	SetKey( mod, "L", "MouseRight" )
-	SetKey( mod, "M", "MouseLeftDown" )
-	SetKey( mod, "`,","MouseDown" )
-	SetKey( mod, "`.","MouseRightDown" )
-	
-	; Numeric
-	SetKey( mod, "7", "MouseLeftUp" )
-	SetKey( mod, "8", "MouseUp" )
-	SetKey( mod, "9", "MouseRightUp" )
-	SetKey( mod, "4", "MouseLeft" )
-	SetKey( mod, "5", "MouseDown" )
-	SetKey( mod, "6", "MouseRight" )
-	SetKey( mod, "1", "MouseLeftDown" )
-	SetKey( mod, "2", "MouseDown" )
-	SetKey( mod, "3", "MouseRightDown" )
-	
-	; Arrows
-	SetKey( mod, "Up", "MouseUp" )
-	SetKey( mod, "Down", "MouseDown" )
-	SetKey( mod, "Left", "MouseLeft" )
-	SetKey( mod, "Right", "MouseRight" )
+SetKeyMap( keys* ) {
+	global keyMap, keyMaps
+    for index, value in keys
+        keyMap .= keyMaps[value] . " "
+    return SubStr( str, 1, -StrLen(sep) )
 }
 
-; Set up one hotkey by combining the modifier and key names.
+SetAllKeys( on ) {
+	; Each of these modifier keys enables the same set of JKLmouse hotkeys
+	SetKeys( on, "CapsLock" )
+	SetKeys( on, "~LButton" )
+	SetKeys( on, "~RButton" )
+	SetKeys( on, "~MButton" )
+	SetKeys( on, "~XButton1" )
+	SetKeys( on, "~XButton2" )
+}
+
+; Set up or remove all the hotkeys for a specific modifier key
+SetKeys( on, mod ) {
+	global keyMap
+	Loop, Parse, keyMap, %A_Space%
+	{
+		StringSplit map, A_LoopField, ~
+		SetKey( on, mod, map1, "Mouse" . map2 )
+	}
+}
+
+; Set up or remove one hotkey by combining the modifier and key names.
 ; Take the specified action on key down,
 ; and always stop acceleration on key up.
-SetKey( mod, key, action ) {
+SetKey( on, mod, key, action ) {
 	keydown = %mod% & %key%
-	Hotkey %keydown%, %action%
-	Hotkey %keydown% UP, StopAcceleration
+	if( on ) {
+		Hotkey %keydown%, %action%
+		Hotkey %keydown% UP, StopAcceleration
+	}
+	else {
+		Hotkey %keydown%, Off
+		Hotkey %keydown% UP, Off
+	}
 }
 
 ; Move the mouse the specifed x and y distances, both scaled by the
@@ -99,6 +112,14 @@ Move( x, y ) {
 	y := y * factor
 	MouseMove, x, y, 0, R
 }
+
+;ArrayJoin( sep, ary ) {
+;    for index, value in ary
+;		MsgBox % index
+;        ;str .= value . sep
+;	MsgBox % str
+;    return SubStr( str, 1, -StrLen(sep) )
+;}
 
 ; Handle the keydown for each of the mouse movement directions
 ; TODO: Maybe a way to simplify this?
@@ -114,16 +135,16 @@ MouseLeft:
 MouseRight:
 	Move( 1, 0 )
 	return
-MouseLeftUp:
+MouseUpLeft:
 	Move( -1, -1 )
 	return
-MouseRightUp:
+MouseUpRight:
 	Move( 1, -1 )
 	return
-MouseLeftDown:
+MouseDownLeft:
 	Move( -1, 1 )
 	return
-MouseRightDown:
+MouseDownRight:
 	Move( 1, 1 )
 	return
 
@@ -136,3 +157,16 @@ StopAcceleration:
 MenuAbout:
 	Run, http://www.jklmouse.com/
 	return
+
+MenuESDF:
+	return
+
+MenuWASD:
+	return
+
+MenuIJKL:
+	return
+
+MenuHJKL:
+	return
+
