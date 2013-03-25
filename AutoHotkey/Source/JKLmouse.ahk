@@ -1,9 +1,10 @@
 ; JKLmouse for AutoHotkey by Michael Geary
 ; http://www.jklmouse.com/ - documentation
 ; http://unlicense.org/ - public domain statement
-; Version 0.1: 11/3/2011
 
 #SingleInstance force
+
+version := "0.2x"
 
 ; Use either the embedded icon in a compiled .exe,
 ; or a separate .ico file when running the .ahk script.
@@ -34,6 +35,7 @@ Menu, Tray, Add, Right Hand: IJKL, MenuIJKL
 Menu, Tray, Add, Right Hand: HJKL, MenuHJKL
 Menu, Tray, Add
 Menu, Tray, Add, About JKLmouse, MenuAbout
+Menu, Tray, Add, JKLmouse Website, MenuWebsite
 
 Menu, Tray, Check, Left Hand: ESDF
 Menu, Tray, Check, Right Hand: IJKL
@@ -154,6 +156,11 @@ StopAcceleration:
 
 ; Handle the About menu item
 MenuAbout:
+	MsgBox, 0x2040, JKLmouse by Geary Labs, JKLmouse version %version%`nAutoHotkey version %A_AhkVersion%
+	return
+
+; Handle the Website menu item
+MenuWebsite:
 	Run, http://www.jklmouse.com/
 	return
 
