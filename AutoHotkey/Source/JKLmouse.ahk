@@ -3,7 +3,6 @@
 ; http://unlicense.org/ - public domain statement
 ; Version 0.1: 11/3/2011
 
-#AllowSameLineComments
 #SingleInstance force
 
 ; Use either the embedded icon in a compiled .exe,
