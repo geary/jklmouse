@@ -15,8 +15,9 @@ iconPath := RegExReplace( A_ScriptFullPath, "i).ahk$", ".ico" )
 regKeySettings := "Software\JKLmouse"
 
 ; TODO: protect against invalid registry string
-keysLeft := RegStringRead( "KeysLeft", "ESDF" )
-keysRight := RegStringRead( "KeysRight", "IJKL" )
+accelerate := RegReadValue( "Accelerate", 1 )
+keysLeft := RegReadValue( "KeysLeft", "ESDF" )
+keysRight := RegReadValue( "KeysRight", "IJKL" )
 
 keyMap := ""
 
@@ -42,9 +43,13 @@ Menu, Tray, Add
 Menu, Tray, Add, Right Hand: IJKL, MenuIJKL
 Menu, Tray, Add, Right Hand: HJKL, MenuHJKL
 Menu, Tray, Add
+Menu, Tray, Add, Acceleration, MenuAccelerate
+Menu, Tray, Add
 Menu, Tray, Add, About JKLmouse, MenuAbout
 Menu, Tray, Add, JKLmouse Website, MenuWebsite
 
+if( accelerate )
+	Menu, Tray, Check, Acceleration
 Menu, Tray, Check, Left Hand: %keysLeft%
 Menu, Tray, Check, Right Hand: %keysRight%
 
@@ -70,19 +75,29 @@ return
 
 
 ; Read a string value from our settings registry key, or return otherwise if not present
-RegStringRead( name, otherwise ) {
+RegReadValue( name, otherwise ) {
 	global regKeySettings
 	value := ""
-	RegRead, value, HKEY_CURRENT_USER, %regKeySettings%, %name%
+	RegRead, value, HKCU, %regKeySettings%, %name%
 	if( ErrorLevel )
 		return %otherwise%
 	return %value%
 }
 
+; Write a dword value to our settings registry key
+RegWriteDword( name, value ) {
+	RegWriteValue( name, value, "REG_DWORD" )
+}
+
 ; Write a string value to our settings registry key
-RegStringWrite( name, value ) {
+RegWriteString( name, value ) {
+	RegWriteValue( name, value, "REG_SZ" )
+}
+
+; Write a value of a specific type to our settings registry key
+RegWriteValue( name, value, type ) {
 	global regKeySettings
-	RegWrite, REG_SZ, HKEY_CURRENT_USER, %regKeySettings%, %name%, %value%
+	RegWrite, %type%, HKCU, %regKeySettings%, %name%, %value%
 }
 
 ; TODO: refactor SetKeysLeft() and SetKeysRight()!
@@ -94,7 +109,7 @@ SetKeysLeft( keys ) {
 	Menu, Tray, Uncheck, Left Hand: %keysLeft%
 	keysLeft := keys
 	Menu, Tray, Check, Left Hand: %keysLeft%
-	RegStringWrite( "KeysLeft", keysLeft )
+	RegWriteString( "KeysLeft", keysLeft )
 	ReloadAllKeys()
 }
 
@@ -105,7 +120,7 @@ SetKeysRight( keys ) {
 	Menu, Tray, Uncheck, Right Hand: %keysRight%
 	keysRight := keys
 	Menu, Tray, Check, Right Hand: %keysRight%
-	RegStringWrite( "KeysRight", keysRight )
+	RegWriteString( "KeysRight", keysRight )
 	ReloadAllKeys()
 }
 
@@ -170,9 +185,9 @@ SetKey( on, mod, key, action ) {
 ; Move the mouse the specifed x and y distances, both scaled by the
 ; mouse acceleration factor calculated from the key repeat count.
 Move( x, y ) {
-	global repeat
+	global accelerate, repeat
 	++repeat
-	factor := Floor( ( repeat + 1 ) / 2 )
+	factor := accelerate ? Floor( ( repeat + 1 ) / 2 ) : 1
 	x := x * factor
 	y := y * factor
 	MouseMove, x, y, 0, R
@@ -185,6 +200,14 @@ Move( x, y ) {
 ;	MsgBox % str
 ;    return SubStr( str, 1, -StrLen(sep) )
 ;}
+
+ToggleAccelerate() {
+	global accelerate
+	accelerate := ! accelerate
+	RegWriteDword( "Accelerate", accelerate )
+	action := accelerate ? "Check" : "Uncheck"
+	Menu, Tray, %action%, Acceleration
+}
 
 ; Handle the keydown for each of the mouse movement directions
 ; TODO: Maybe a way to simplify this?
@@ -244,3 +267,6 @@ MenuHJKL:
 	setKeysRight( "HJKL" )
 	return
 
+MenuAccelerate:
+	toggleAccelerate()
+	return
