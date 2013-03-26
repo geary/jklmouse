@@ -4,11 +4,19 @@
 
 #SingleInstance force
 
+SetRegView, 64
+
 version := "0.2x"
 
 ; Use either the embedded icon in a compiled .exe,
 ; or a separate .ico file when running the .ahk script.
 iconPath := RegExReplace( A_ScriptFullPath, "i).ahk$", ".ico" )
+
+regKeySettings := "Software\JKLmouse"
+
+; TODO: protect against invalid registry string
+keysLeft := RegStringRead( "KeysLeft", "ESDF" )
+keysRight := RegStringRead( "KeysRight", "IJKL" )
 
 keyMap := ""
 
@@ -37,8 +45,8 @@ Menu, Tray, Add
 Menu, Tray, Add, About JKLmouse, MenuAbout
 Menu, Tray, Add, JKLmouse Website, MenuWebsite
 
-Menu, Tray, Check, Left Hand: ESDF
-Menu, Tray, Check, Right Hand: IJKL
+Menu, Tray, Check, Left Hand: %keysLeft%
+Menu, Tray, Check, Right Hand: %keysRight%
 
 ; Display tray balloon
 ; TODO: more useful content?
@@ -52,8 +60,7 @@ SetMouseDelay, -1
 ; Hotkey repeat count for acceleration
 repeat := 0
 
-SetKeyMap( "Arrows", "NumPad", "IJKL", "ESDF" )
-;SetKeyMap( "Arrows", "NumPad", "HJKL", "WASD" )
+SetAllKeyMaps()
 
 ;MsgBox % keyMap
 
@@ -61,6 +68,55 @@ SetAllKeys( true )
 
 return
 
+
+; Read a string value from our settings registry key, or return otherwise if not present
+RegStringRead( name, otherwise ) {
+	global regKeySettings
+	value := ""
+	RegRead, value, HKEY_CURRENT_USER, %regKeySettings%, %name%
+	if( ErrorLevel )
+		return %otherwise%
+	return %value%
+}
+
+; Write a string value to our settings registry key
+RegStringWrite( name, value ) {
+	global regKeySettings
+	RegWrite, REG_SZ, HKEY_CURRENT_USER, %regKeySettings%, %name%, %value%
+}
+
+; TODO: refactor SetKeysLeft() and SetKeysRight()!
+
+SetKeysLeft( keys ) {
+	global keysLeft
+	if( keys = keysLeft )
+		return
+	Menu, Tray, Uncheck, Left Hand: %keysLeft%
+	keysLeft := keys
+	Menu, Tray, Check, Left Hand: %keysLeft%
+	RegStringWrite( "KeysLeft", keysLeft )
+	ReloadAllKeys()
+}
+
+SetKeysRight( keys ) {
+	global keysRight
+	if( keys = keysRight )
+		return
+	Menu, Tray, Uncheck, Right Hand: %keysRight%
+	keysRight := keys
+	Menu, Tray, Check, Right Hand: %keysRight%
+	RegStringWrite( "KeysRight", keysRight )
+	ReloadAllKeys()
+}
+
+; Load the entire set of key maps for all arrow pads and all modifiers
+SetAllKeyMaps() {
+	global keyMap, keysLeft, keysRight
+	keyMap := ""
+	SetKeyMap( "Arrows", "NumPad", keysLeft, keysRight )
+}
+
+; Load the specified key maps for all modifiers
 SetKeyMap( keys* ) {
 	global keyMap, keyMaps
     for index, value in keys
@@ -68,6 +124,14 @@ SetKeyMap( keys* ) {
     return SubStr( str, 1, -StrLen(sep) )
 }
 
+; Turn off existing key maps, reparse and reload new key maps
+ReloadAllKeys() {
+	SetAllKeys( false )
+	SetAllKeyMaps()
+	SetAllKeys( true )
+}
+
+; Set up or remove all hotkeys for all modifier keys
 SetAllKeys( on ) {
 	; Each of these modifier keys enables the same set of JKLmouse hotkeys
 	SetKeys( on, "CapsLock" )
@@ -94,12 +158,12 @@ SetKeys( on, mod ) {
 SetKey( on, mod, key, action ) {
 	keydown = %mod% & %key%
 	if( on ) {
-		Hotkey %keydown%, %action%
-		Hotkey %keydown% UP, StopAcceleration
+		Hotkey, %keydown%, %action%, On
+		Hotkey, %keydown% UP, StopAcceleration, On
 	}
 	else {
-		Hotkey %keydown%, Off
-		Hotkey %keydown% UP, Off
+		Hotkey, %keydown%, %action%, Off
+		Hotkey, %keydown% UP, StopAcceleration, Off
 	}
 }
 
@@ -165,14 +229,18 @@ MenuWebsite:
 	return
 
 MenuESDF:
+	setKeysLeft( "ESDF" )
 	return
 
 MenuWASD:
+	setKeysLeft( "WASD" )
 	return
 
 MenuIJKL:
+	setKeysRight( "IJKL" )
 	return
 
 MenuHJKL:
+	setKeysRight( "HJKL" )
 	return
 
