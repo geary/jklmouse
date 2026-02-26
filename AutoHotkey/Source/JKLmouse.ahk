@@ -4,9 +4,15 @@
 
 #SingleInstance force
 
+; Use virtual desktop screen coordinates for mouse operations.
+; This gives consistent behavior across multiple monitors,
+; including negative coordinates when monitors are above or to
+; the left of the primary monitor.
+CoordMode, Mouse, Screen
+
 SetRegView, 64
 
-version := "0.2x"
+version := "1.0.4"
 
 ; Use either the embedded icon in a compiled .exe,
 ; or a separate .ico file when running the .ahk script.
@@ -185,13 +191,15 @@ SetKey( on, mod, key, action ) {
 
 ; Move the mouse the specifed x and y distances, both scaled by the
 ; mouse acceleration factor calculated from the key repeat count.
-Move( x, y ) {
+Move( moveX, moveY ) {
 	global accelerate, repeat
 	++repeat
 	factor := accelerate ? Floor( ( repeat + 1 ) / 2 ) : 1
-	x := x * factor
-	y := y * factor
-	MouseMove, x, y, 0, R
+
+	MouseGetPos, currentX, currentY
+	newX := currentX + ( moveX * factor )
+	newY := currentY + ( moveY * factor )
+	DllCall( "User32\SetCursorPos", "int", newX, "int", newY )
 }
 
 ;ArrayJoin( sep, ary ) {
