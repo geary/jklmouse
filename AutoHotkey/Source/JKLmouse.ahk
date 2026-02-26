@@ -14,7 +14,7 @@ iconPath := RegExReplace( A_ScriptFullPath, "i).ahk$", ".ico" )
 
 regKeySettings := "Software\JKLmouse"
 
-; TODO: protect against invalid registry string
+; TODO: protect against invalid registry values
 accelerate := RegReadValue( "Accelerate", 1 )
 keysLeft := RegReadValue( "KeysLeft", "ESDF" )
 keysRight := RegReadValue( "KeysRight", "IJKL" )
@@ -37,21 +37,22 @@ keyMaps :=
 Menu, Tray, Icon, %iconPath%
 Menu, Tray, Tip, JKLmouse
 Menu, Tray, Add
-Menu, Tray, Add, Left Hand: ESDF, MenuESDF
-Menu, Tray, Add, Left Hand: WASD, MenuWASD
+Menu, Tray, Add, Left Hand: &ESDF, MenuESDF
+Menu, Tray, Add, Left Hand: &WASD, MenuWASD
 Menu, Tray, Add
-Menu, Tray, Add, Right Hand: IJKL, MenuIJKL
-Menu, Tray, Add, Right Hand: HJKL, MenuHJKL
+Menu, Tray, Add, Right Hand: &IJKL, MenuIJKL
+Menu, Tray, Add, Right Hand: &HJKL, MenuHJKL
 Menu, Tray, Add
-Menu, Tray, Add, Acceleration, MenuAccelerate
+Menu, Tray, Add, &Acceleration, MenuAccelerate
 Menu, Tray, Add
-Menu, Tray, Add, About JKLmouse, MenuAbout
-Menu, Tray, Add, JKLmouse Website, MenuWebsite
+Menu, Tray, Add, About &JKLmouse, MenuAbout
+Menu, Tray, Add, JKLmouse We&bsite, MenuWebsite
+Menu, Tray, Add, JKLmouse on &GitHub, MenuGitHub
 
 if( accelerate )
-	Menu, Tray, Check, Acceleration
-Menu, Tray, Check, Left Hand: %keysLeft%
-Menu, Tray, Check, Right Hand: %keysRight%
+	Menu, Tray, Check, &Acceleration
+Menu, Tray, Check, Left Hand: &%keysLeft%
+Menu, Tray, Check, Right Hand: &%keysRight%
 
 ; Display tray balloon
 ; TODO: more useful content?
@@ -106,9 +107,9 @@ SetKeysLeft( keys ) {
 	global keysLeft
 	if( keys = keysLeft )
 		return
-	Menu, Tray, Uncheck, Left Hand: %keysLeft%
+	Menu, Tray, Uncheck, Left Hand: &%keysLeft%
 	keysLeft := keys
-	Menu, Tray, Check, Left Hand: %keysLeft%
+	Menu, Tray, Check, Left Hand: &%keysLeft%
 	RegWriteString( "KeysLeft", keysLeft )
 	ReloadAllKeys()
 }
@@ -117,9 +118,9 @@ SetKeysRight( keys ) {
 	global keysRight
 	if( keys = keysRight )
 		return
-	Menu, Tray, Uncheck, Right Hand: %keysRight%
+	Menu, Tray, Uncheck, Right Hand: &%keysRight%
 	keysRight := keys
-	Menu, Tray, Check, Right Hand: %keysRight%
+	Menu, Tray, Check, Right Hand: &%keysRight%
 	RegWriteString( "KeysRight", keysRight )
 	ReloadAllKeys()
 }
@@ -206,7 +207,7 @@ ToggleAccelerate() {
 	accelerate := ! accelerate
 	RegWriteDword( "Accelerate", accelerate )
 	action := accelerate ? "Check" : "Uncheck"
-	Menu, Tray, %action%, Acceleration
+	Menu, Tray, %action%, &Acceleration
 }
 
 ; Handle the keydown for each of the mouse movement directions
@@ -249,6 +250,11 @@ MenuAbout:
 ; Handle the Website menu item
 MenuWebsite:
 	Run, http://www.jklmouse.com/
+	return
+
+; Handle the GitHub menu item
+MenuGitHub:
+	Run, https://github.com/geary/jklmouse
 	return
 
 MenuESDF:
